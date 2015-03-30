@@ -16,17 +16,18 @@ public class Broadcaster {
         listeners.remove(listener);
     }
 
-    public static void broadcast(final String message,BroadcastListener potentialCompetitor,BroadcastListener broadcastListener) {
+    public static void broadcast(final String message, BroadcastListener potentialCompetitor, BroadcastListener nameOfPlayer, String stan ) {
 
         for (BroadcastListener listener : listeners) {
             if(listener==potentialCompetitor)
-            listener.receiveBroadcast(message,potentialCompetitor,broadcastListener);
-
+            listener.receiveBroadcast(message, nameOfPlayer, stan);
         }
     }
 
     public interface BroadcastListener {
-        public void receiveBroadcast(String message, BroadcastListener potentialCompetitor, BroadcastListener ls);
+        public void receiveBroadcast(String message, BroadcastListener potentialCompetitor, String stan);
+        public void receiveMove(int x, int y);
+        public void receiveNumber(int numberOfPlayer,String s);
     }
 
 }

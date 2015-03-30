@@ -28,7 +28,7 @@ public class chooseView extends VerticalLayout implements View {
         Table players = new Table("Players");
         players.addContainerProperty("Name", String.class, null);
 
-        int counter = 0;
+        int counter = 1;
         for (Broadcaster.BroadcastListener listener : Broadcaster.listeners) {
             if (listener != this)
                 players.addItem(new Object[]{listener.toString()}, counter);
@@ -50,7 +50,7 @@ public class chooseView extends VerticalLayout implements View {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Broadcaster.broadcast("wysylam do ciebie wiadomosc", Broadcaster.listeners.get(Integer.parseInt(components.playerNumber)),null);
+                Broadcaster.broadcast("wysylam do ciebie wiadomosc", Broadcaster.listeners.get(Integer.parseInt(components.playerNumber)),components.listenerOfME,"pytanie");
             }
         });
 

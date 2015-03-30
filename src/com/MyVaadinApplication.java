@@ -10,8 +10,10 @@ public class MyVaadinApplication extends UI  implements Broadcaster.BroadcastLis
 
     int partner;
     String playerNumber;
+    Integer competitorNumber;
     String nazwaGracza;
-    String nazwaKonkurenta;
+    Broadcaster.BroadcastListener listenerOfCompetitor;
+    Broadcaster.BroadcastListener listenerOfME;
     Navigator navigator;
     Label playerLabel = new Label();
     Window windowAskPlayer;
@@ -20,13 +22,15 @@ public class MyVaadinApplication extends UI  implements Broadcaster.BroadcastLis
     protected void init(VaadinRequest request) {
 
 //region askWindow
-        windowAskPlayer = new Window("Czy chcesz zagrać z graczem :"+nazwaKonkurenta );
+        windowAskPlayer = new Window("Czy chcesz zagrać z graczem :");
         VerticalLayout verticalLayout = new VerticalLayout();
         Button asking = new Button("Accept", new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-                    navigator.navigateTo("playView");
+                     navigator.navigateTo("playView");
                      windowAskPlayer.close();
+                     Broadcaster.broadcast("Ok fanie",listenerOfCompetitor,listenerOfME, "odpowiedz");
+                     listenerOfCompetitor.receiveNumber(Integer.parseInt(playerNumber),"");
             }
         });
         verticalLayout.addComponent(asking);
@@ -43,9 +47,13 @@ public class MyVaadinApplication extends UI  implements Broadcaster.BroadcastLis
         navigator.addView("", new loginView(this));
         navigator.addView("chooseView", new chooseView(this));
         navigator.addView("playView", new playView(this));
+        navigator.addView("registerView", new registerView(this));
+
 //endregion
 
+        listenerOfME=this;
         Broadcaster.register(this);
+
     }
 
     @Override
@@ -55,17 +63,53 @@ public class MyVaadinApplication extends UI  implements Broadcaster.BroadcastLis
     }
 
     @Override
-    public void receiveBroadcast(final String message, Broadcaster.BroadcastListener potentialCompetitor, Broadcaster.BroadcastListener ls) {
+    public void receiveBroadcast(final String message, Broadcaster.BroadcastListener playerWhoAsk, String stan) {
         access(new Runnable() {
             @Override
             public void run() {
-                nazwaKonkurenta =potentialCompetitor.toString();
-                addWindow(windowAskPlayer);
+                if (stan == "pytanie") {
+                    listenerOfCompetitor = playerWhoAsk;
+                    addWindow(windowAskPlayer);
+                    listenerOfCompetitor.receiveNumber(Integer.parseInt(playerNumber),"pytanie");
+                } else if (stan == "odpowiedz") {
+                    Notification n = new Notification("Zgodził się gracz : " + playerWhoAsk.toString(),
+                            message, Notification.Type.TRAY_NOTIFICATION);
+                    n.show(getPage());
+                    navigator.navigateTo("playView");
+                }
 
-                Notification n = new Notification("Message received",
-                        message, Notification.Type.TRAY_NOTIFICATION);
-                n.show(getPage());
+            }
+        });}
+
+        @Override
+        public void receiveMove ( int x, int y){
+            access(new Runnable() {
+                @Override
+                public void run() {
+
+
+                }
+            });
+
+        }
+    @Override
+    public void receiveNumber ( int numberOfPlayer, String stan){
+        access(new Runnable() {
+            @Override
+            public void run() {
+
+                if(stan=="pytanie")
+                competitorNumber=numberOfPlayer;
             }
         });
+
     }
+
+
+    public void logikaGrania()
+    {
+        listenerOfCompetitor.receiveMove(6, 6);
+    }
+
+
 }
