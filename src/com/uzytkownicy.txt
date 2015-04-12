@@ -1,1 +1,2 @@
-nazwa:afssd; haslo:d
+nazwa:Adam; haslo:haslo
+nazwa:Bartek; haslo:haslo

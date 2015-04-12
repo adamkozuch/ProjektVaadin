@@ -10,29 +10,27 @@ import java.nio.file.Paths;
 
 /** A start view for navigating to the main view */
 public class loginView extends VerticalLayout implements View {
-    private MyVaadinApplication components;
+   // private ApplicationCore components;
 
-    public loginView(MyVaadinApplication components) {
-        this.components = components;
-        setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
-        setHeight("100");
-        setWidth("1000");
-
+    public loginView(ApplicationCore components) {
 
         final TextField name = new TextField("");
-        final TextField password = new TextField("");
+        final PasswordField password = new PasswordField("");
 
         Button button = new Button("Zaloguj",
                 new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
-                        components.playerLabel.setValue(String.valueOf(name));
-                        components.nazwaGracza=String.valueOf(name);
+
+                        components.thisPlayerName =String.valueOf(name);
 
                         if(loginUser(name, password, components)==false)
                         {
                             Notification.show("Wprowadziłes nieprawidłowe dane");
                         }
+                        Broadcaster.register(components,components.thisPlayerName);
+
+                   //     components.navigator.addView("registerView", new registerView(this));
                     }
                 });
 
@@ -43,20 +41,21 @@ public class loginView extends VerticalLayout implements View {
                         components.navigator.navigateTo("registerView");
                     }
                 });
-
-
-        addComponent(button);
-
         addComponent(name);
         addComponent(password);
+        addComponent(button);
         addComponent(registerBtn);
-
+        setComponentAlignment(name, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(password, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(button, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(registerBtn,Alignment.MIDDLE_CENTER);
 
     }
 
-    private boolean loginUser(TextField name, TextField password, MyVaadinApplication components) {
+    private boolean loginUser(TextField name, PasswordField password, ApplicationCore components) {
         try {
             for (String line : Files.readAllLines(Paths.get("/home/adam/Projekt/src/com/uzytkownicy.txt"))) {
+
 
                 String s[] = line.split(";");
                 String n= s[0].substring(s[0].indexOf(":")+1);

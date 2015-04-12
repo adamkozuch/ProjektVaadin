@@ -1,6 +1,5 @@
 package com;
 
-import com.vaadin.data.Property;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -9,59 +8,49 @@ import com.vaadin.ui.*;
  * A start view for navigating to the main view
  */
 public class chooseView extends VerticalLayout implements View {
-    private MyVaadinApplication components;
 
-    public chooseView(MyVaadinApplication components) {
-        this.components = components;
-        setSizeUndefined();
+    public chooseView(ApplicationCore app) {
+
         setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
-        Button button = new Button("Go to playView",
-                new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        components.navigator.navigateTo("playView");
-                    }
-                });
-        addComponent(button);
+
 
 //region definition of table
+
         Table players = new Table("Players");
+        players.setWidth("300");
+        players.setHeight("500");
         players.addContainerProperty("Name", String.class, null);
 
         int counter = 1;
-        for (Broadcaster.BroadcastListener listener : Broadcaster.listeners) {
-            if (listener != this)
-                players.addItem(new Object[]{listener.toString()}, counter);
-            counter++;
-        }
+
         players.setSelectable(true);
         players.setImmediate(true);
-        players.addValueChangeListener(new Property.ValueChangeListener() {
-            public void valueChange(Property.ValueChangeEvent event) {
-                components.playerNumber = players.getValue().toString();
-            }
-        });
+        //po co jest ten kod?
+        players.addValueChangeListener(event -> app.competitorListener =Broadcaster.listenersMap.get(players.getValue()));
+
+
 
 //endregion
 //region button that choose player
-        final Button choose = new Button("Choose");
+        final Button choose = new Button("Zaproponuj grę");
 
-        choose.addClickListener(new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                Broadcaster.broadcast("wysylam do ciebie wiadomosc", Broadcaster.listeners.get(Integer.parseInt(components.playerNumber)),components.listenerOfME,"pytanie");
-            }
+        choose.addClickListener(event -> {
+            Broadcaster.sendRequest("wysylam do ciebie wiadomosc",
+                    app.competitorListener,app,
+                     "pytanie");
         });
 
-        addComponent(choose);
-        addComponent(components.playerLabel);
+        for (String listener : Broadcaster.listenersMap.keySet()) {
+            if (listener != app.thisPlayerName)
+                players.addItem(new Object[]{listener}, listener);
+        }
+
         addComponent(players);
-
-
-
+        addComponent(choose);
 
     }
+
+
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

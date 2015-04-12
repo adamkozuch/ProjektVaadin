@@ -9,9 +9,6 @@ import com.vaadin.ui.*;
  * Created by adam on 30.03.15.
  */
 
-    import com.vaadin.navigator.ViewChangeListener;
-    import com.vaadin.ui.*;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,9 +16,9 @@ import java.io.IOException;
 
 /** A start view for navigating to the main view */
     public class registerView extends VerticalLayout implements View {
-        private MyVaadinApplication components;
+        private ApplicationCore components;
 
-        public registerView(MyVaadinApplication components) {
+        public registerView(ApplicationCore components) {
             this.components = components;
             setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
             setHeight("100");
@@ -40,16 +37,12 @@ import java.io.IOException;
                     5, 10, true));
 
             Button button = new Button("Zarejestruj",
-                    new Button.ClickListener() {
-                        @Override
-                        public void buttonClick(Button.ClickEvent event) {
-                            writeToFile(name, password);
-                              components.navigator.navigateTo("");
-
-                        }
+                    event -> {
+                        writeToFile(name, password);
+                          components.navigator.navigateTo("");
                     });
             addComponent(button);
-            //setComponentAlignment(button,Alignment.MIDDLE_CENTER);
+
             addComponent(name);
             addComponent(password);
 
