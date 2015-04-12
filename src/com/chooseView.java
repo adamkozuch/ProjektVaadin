@@ -35,9 +35,12 @@ public class chooseView extends VerticalLayout implements View {
         final Button choose = new Button("Zaproponuj grę");
 
         choose.addClickListener(event -> {
+            if(app.competitorListener!=null)
             Broadcaster.sendRequest("wysylam do ciebie wiadomosc",
                     app.competitorListener,app,
                      "pytanie");
+            else
+                Notification.show("Nie wybrałeś przeciwnika");
         });
 
         for (String listener : Broadcaster.listenersMap.keySet()) {

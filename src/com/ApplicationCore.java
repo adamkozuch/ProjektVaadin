@@ -1,11 +1,13 @@
 package com;
 
 import com.vaadin.annotations.Push;
+import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
 
 @Push
+@Theme("runo")
 public class ApplicationCore extends UI  implements Broadcaster.BroadcastListener {
 
 
@@ -18,17 +20,19 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
     Window windowAskForGame;
     boolean yourMove = false;
     public String competitorName;
+    String znak ;
 
     protected void init(VaadinRequest request) {
 
-        windowAskForGame = new Window("Czy chcesz zagrać z graczem :");
+        windowAskForGame = new Window();
+windowAskForGame.center();
 
         VerticalLayout verticalLayout = new VerticalLayout();
-        Button asking = new Button("Accept", clickEvent -> {
+        Button asking = new Button("Akceptuj", clickEvent -> {
                  navigator.addView("playView",new playView(this));
                  navigator.navigateTo("playView");
                  windowAskForGame.close();
-                 Broadcaster.sendRequest("Ok fanie", competitorListener,this, "odpowiedz");
+                 Broadcaster.sendRequest("OK", competitorListener,this, "odpowiedz");
         });
         verticalLayout.addComponent(asking);
         windowAskForGame.setContent(verticalLayout);
@@ -59,10 +63,13 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
         access(new Runnable() {
             @Override
             public void run() {
+
                 if (stan.equals("pytanie")) {
                     ApplicationCore.this.competitorListener =thisListener ;  //przekazuje sobie competitora
+                    windowAskForGame.setCaption("Gracz :"+thisListener+" proponuje grę");
                     ApplicationCore.this.addWindow(windowAskForGame);
                      yourMove=false;//gracz proszący jest pierwszy
+                    znak="x";
 
                 } else if (stan.equals("odpowiedz")) {
                     Notification n = new Notification("Gracz : " + cls.toString(),
@@ -73,6 +80,7 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
 
                     navigator.addView("playView",new playView(ApplicationCore.this) );
                     navigator.navigateTo("playView");
+                    znak ="o";
                 }
             }
 
@@ -82,23 +90,23 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
         @Override
         public void receiveMove (int x, int y){
             access(() -> {
-                gridLayout.getComponent(x,y).setVisible(false);
+                String s;
+                if(znak.equals("o"))
+                    s="x";
+                else
+                    s="o";
+
+                gridLayout.getComponent(x,y).setCaption(s);
                 yourMove=true;
             });
+            Notification.show("Czekaj aż przeciwnik wykona ruch",Notification.Type.ASSISTIVE_NOTIFICATION);
         }
 
     @Override
     public void receivePlayerNumber(int numberOfPlayer, String s) {
 
     }
-//    @Override
-//    public void receivePlayerNumber(int competitorNumber, String stan){
-//        access(() -> {
-//            if(stan=="pytanie")
-//            competitorPlayerNumber =competitorNumber;
-//        });
-//
-//    }
+
 
 
     public void logikaGrania()
@@ -120,20 +128,26 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
             {
                 final int finalI = i;
                 final int finalJ = j;
-                gridLayout.addComponent(new Button("x", event -> {
+                gridLayout.addComponent(new Button("", event -> {
 
                     if (MOVE()) {
                         competitorListener.receiveMove(finalI, finalJ);
-                        gridLayout.getComponent(finalI, finalJ).setVisible(false);
                         yourMove = false;
-
+                        gridLayout.getComponent(finalI,finalJ).setCaption(znak);
                         if (tab[finalI][finalJ] != competitorName) {
                             tab[finalI][finalJ] = playerName;
-                            gridLayout.getComponent(finalI, finalJ).setVisible(false);
                             checkIfWinner(competitorName, 2, "Horizontally", tab); //czemu sprawdzam competitora
+
                         }
+                    }else
+                    {
+                        Notification.show("Czekaj aż przeciwnik wykona ruch");
                     }
                 }), i, j);
+                gridLayout.getComponent(finalI,finalJ).setHeight("40px");
+                gridLayout.getComponent(finalI,finalJ).setWidth("40px");
+
+
             }
     }
 

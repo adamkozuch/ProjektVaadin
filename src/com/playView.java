@@ -15,17 +15,25 @@ public class playView extends VerticalLayout implements View {
 
         app.tab =  new String[5][5];
         app.gridLayout = new GridLayout(5,5);
+app.gridLayout.setStyleName("header");
 
-        setSizeFull();
         setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
         Button button = new Button("Idz do ekranu wyboru",
                 event -> app.navigator.navigateTo("chooseView")
                 );
-        addComponent(button);
+button.setStyleName("");
 //TODO nie mam gracza
+
+Label l =new Label("Gracz : " + app.thisPlayerName);
+        l.setStyleName("h1");
+        l.setWidth(null);
+        addComponent(l);
+setComponentAlignment(l,Alignment.MIDDLE_CENTER);
+        addComponent(button);
         app.createBoard(app.thisPlayerName);
         addComponent(app.gridLayout);
+
     }
 
 

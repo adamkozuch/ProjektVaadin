@@ -10,8 +10,6 @@ import java.nio.file.Paths;
 
 /** A start view for navigating to the main view */
 public class loginView extends VerticalLayout implements View {
-   // private ApplicationCore components;
-
     public loginView(ApplicationCore components) {
 
         final TextField name = new TextField("");
@@ -24,12 +22,12 @@ public class loginView extends VerticalLayout implements View {
 
                         components.thisPlayerName =String.valueOf(name);
 
+                        if(!Broadcaster.listenersMap.keySet().contains(String.valueOf(name)))
                         if(loginUser(name, password, components)==false)
                         {
                             Notification.show("Wprowadziłes nieprawidłowe dane");
                         }
                         Broadcaster.register(components,components.thisPlayerName);
-
                    //     components.navigator.addView("registerView", new registerView(this));
                     }
                 });
@@ -41,14 +39,31 @@ public class loginView extends VerticalLayout implements View {
                         components.navigator.navigateTo("registerView");
                     }
                 });
+
+
+//        setComponentAlignment(name, Alignment.MIDDLE_CENTER);
+//        setComponentAlignment(password, Alignment.MIDDLE_CENTER);
+//        setComponentAlignment(button, Alignment.MIDDLE_CENTER);
+//        setComponentAlignment(registerBtn,Alignment.MIDDLE_CENTER);
+        setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+
+        Label lLogin = new Label("Login");
+        lLogin.setWidth(null);
+        Label lHaslo = new Label("Haslo");
+        lHaslo.setWidth(null);
+        lLogin.setStyleName("h3");
+        lHaslo.setStyleName("h3");
+        HorizontalLayout h = new HorizontalLayout();
+
+        h.addComponent(button);
+        h.addComponent(registerBtn);
+        
+        addComponent(lLogin);
         addComponent(name);
+        addComponent(lHaslo);
         addComponent(password);
-        addComponent(button);
-        addComponent(registerBtn);
-        setComponentAlignment(name, Alignment.MIDDLE_CENTER);
-        setComponentAlignment(password, Alignment.MIDDLE_CENTER);
-        setComponentAlignment(button, Alignment.MIDDLE_CENTER);
-        setComponentAlignment(registerBtn,Alignment.MIDDLE_CENTER);
+        addComponent(h);
+
 
     }
 
@@ -78,6 +93,6 @@ public class loginView extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        Notification.show("Zaloguj sie osbie");
+
     }
 }
