@@ -29,7 +29,6 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
                  navigator.navigateTo("playView");
                  windowAskForGame.close();
                  Broadcaster.sendRequest("Ok fanie", competitorListener,this, "odpowiedz");
-    //             competitorListener.receivePlayerNumber(thisPlayerNumber, "");
         });
         verticalLayout.addComponent(asking);
         windowAskForGame.setContent(verticalLayout);
@@ -68,7 +67,7 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
                 } else if (stan.equals("odpowiedz")) {
                     Notification n = new Notification("Gracz : " + cls.toString(),
                             message, Notification.Type.TRAY_NOTIFICATION);
-                    ApplicationCore.this.competitorListener=cls;
+                    ApplicationCore.this.competitorListener=thisListener;
                     n.show(ApplicationCore.this.getPage());
                     yourMove=true;//gracz proszący jest pierwszy
 
@@ -81,12 +80,11 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
     }
 
         @Override
-        public void receiveMove ( int x, int y){
+        public void receiveMove (int x, int y){
             access(() -> {
                 gridLayout.getComponent(x,y).setVisible(false);
                 yourMove=true;
             });
-
         }
 
     @Override
@@ -112,6 +110,87 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
     {
         return this.yourMove;
     }
+
+
+    void createBoard(String playerName) {
+//MOŻE TAK BYC TYLKO trzeba wysyłać wiadomośc do drugiego gracza
+        //ustawić odpowiednią terminologię
+        for ( int i = 0; i < 5; i++)
+            for ( int j = 0; j < 5; j++)
+            {
+                final int finalI = i;
+                final int finalJ = j;
+                gridLayout.addComponent(new Button("x", event -> {
+
+                    if (MOVE()) {
+                        competitorListener.receiveMove(finalI, finalJ);
+                        gridLayout.getComponent(finalI, finalJ).setVisible(false);
+                        yourMove = false;
+
+                        if (tab[finalI][finalJ] != competitorName) {
+                            tab[finalI][finalJ] = playerName;
+                            gridLayout.getComponent(finalI, finalJ).setVisible(false);
+                            checkIfWinner(competitorName, 2, "Horizontally", tab); //czemu sprawdzam competitora
+                        }
+                    }
+                }), i, j);
+            }
+    }
+
+    public void checkIfWinner(String playerNumber, int numberToWin, String type,String[][] tab)
+    {
+        boolean contionous=false;
+        int counter = 0;
+        for ( int i= 0; i< 5; i++)
+            for ( int j = 0; j < 5; j++)
+            {
+                if(type=="Horizontally") {
+                    if (tab[i][j] == playerNumber) {
+                        if(contionous==true)
+                            counter++;
+                        else
+                            counter=1;
+                    }else
+                    {
+                        contionous=false;
+                    }
+                }
+                if(type=="Verticaly")
+                {
+                    if (tab[j][i] == playerNumber) {
+                        if(contionous==true)
+                            counter++;
+                        else
+                            counter=1;
+                    }else
+                    {
+                        contionous=false;
+                    }
+                }
+
+                if(counter==numberToWin){
+                    Notification.show("Gracz numer:" + playerNumber + " wygral");
+
+
+                }
+            }
+    }
+    public void checkCross() {
+        for (int i = 0; 5 < i; i++) {
+            boolean contionous = false;
+            int counter = 0;
+
+            for (int j = 0; j < 5; j++) {
+            }
+        }
+    }
+
+    public void sendMove(int i, int j,ApplicationCore applicationCore)
+    {
+        applicationCore.competitorListener.receiveMove(i,j);
+
+    }
+
 
 
 }
