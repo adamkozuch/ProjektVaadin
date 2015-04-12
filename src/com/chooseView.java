@@ -13,7 +13,6 @@ public class chooseView extends VerticalLayout implements View {
 
         setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
-
 //region definition of table
 
         Table players = new Table("Players");
@@ -25,10 +24,10 @@ public class chooseView extends VerticalLayout implements View {
 
         players.setSelectable(true);
         players.setImmediate(true);
-        //po co jest ten kod?
-        players.addValueChangeListener(event -> app.competitorListener =Broadcaster.listenersMap.get(players.getValue()));
 
-
+        players.addValueChangeListener(event ->
+        {app.competitorListener = Broadcaster.listenersMap.get(players.getValue());
+                app.competitorName=String.valueOf(players.getValue());});
 
 //endregion
 //region button that choose player
@@ -47,13 +46,9 @@ public class chooseView extends VerticalLayout implements View {
             if (listener != app.thisPlayerName)
                 players.addItem(new Object[]{listener}, listener);
         }
-
         addComponent(players);
         addComponent(choose);
-
     }
-
-
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

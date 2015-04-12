@@ -10,7 +10,6 @@ import com.vaadin.ui.*;
 @Theme("runo")
 public class ApplicationCore extends UI  implements Broadcaster.BroadcastListener {
 
-
     GridLayout gridLayout;
     String tab[][];
     String thisPlayerName;
@@ -25,7 +24,7 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
     protected void init(VaadinRequest request) {
 
         windowAskForGame = new Window();
-windowAskForGame.center();
+        windowAskForGame.center();
 
         VerticalLayout verticalLayout = new VerticalLayout();
         Button asking = new Button("Akceptuj", clickEvent -> {
@@ -63,7 +62,6 @@ windowAskForGame.center();
         access(new Runnable() {
             @Override
             public void run() {
-
                 if (stan.equals("pytanie")) {
                     ApplicationCore.this.competitorListener =thisListener ;  //przekazuje sobie competitora
                     windowAskForGame.setCaption("Gracz :"+thisListener+" proponuje grę");
@@ -95,24 +93,11 @@ windowAskForGame.center();
                     s="x";
                 else
                     s="o";
-
                 gridLayout.getComponent(x,y).setCaption(s);
                 yourMove=true;
             });
             Notification.show("Czekaj aż przeciwnik wykona ruch",Notification.Type.ASSISTIVE_NOTIFICATION);
         }
-
-    @Override
-    public void receivePlayerNumber(int numberOfPlayer, String s) {
-
-    }
-
-
-
-    public void logikaGrania()
-    {
-        competitorListener.receiveMove(6, 6);
-    }
 
     public boolean MOVE()
     {
@@ -121,33 +106,30 @@ windowAskForGame.center();
 
 
     void createBoard(String playerName) {
-//MOŻE TAK BYC TYLKO trzeba wysyłać wiadomośc do drugiego gracza
-        //ustawić odpowiednią terminologię
+
         for ( int i = 0; i < 5; i++)
             for ( int j = 0; j < 5; j++)
             {
                 final int finalI = i;
                 final int finalJ = j;
                 gridLayout.addComponent(new Button("", event -> {
-
                     if (MOVE()) {
-                        competitorListener.receiveMove(finalI, finalJ);
-                        yourMove = false;
-                        gridLayout.getComponent(finalI,finalJ).setCaption(znak);
-                        if (tab[finalI][finalJ] != competitorName) {
+                        if (tab[finalI][finalJ] != competitorName||tab[finalI][finalJ] != playerName)
+                        {
+                            yourMove = false;
+                            gridLayout.getComponent(finalI,finalJ).setCaption(znak);
+                            competitorListener.receiveMove(finalI, finalJ);
                             tab[finalI][finalJ] = playerName;
-                            checkIfWinner(competitorName, 2, "Horizontally", tab); //czemu sprawdzam competitora
-
+                            checkIfWinner(competitorName, 3, "Horizontally", tab); //czemu sprawdzam competitora
+                            checkIfWinner(competitorName,3,"Verticaly",tab);
                         }
-                    }else
+                    } else
                     {
                         Notification.show("Czekaj aż przeciwnik wykona ruch");
                     }
                 }), i, j);
                 gridLayout.getComponent(finalI,finalJ).setHeight("40px");
                 gridLayout.getComponent(finalI,finalJ).setWidth("40px");
-
-
             }
     }
 
@@ -160,10 +142,16 @@ windowAskForGame.center();
             {
                 if(type=="Horizontally") {
                     if (tab[i][j] == playerNumber) {
-                        if(contionous==true)
+                        if(contionous==true) {
                             counter++;
-                        else
-                            counter=1;
+                            if (counter == numberToWin) {
+                                Notification.show("Gracz numer:" + playerNumber + " wygral");
+                            }
+                        }
+                        else {
+                            counter = 1;
+                            contionous=true;
+                        }
                     }else
                     {
                         contionous=false;
@@ -172,23 +160,24 @@ windowAskForGame.center();
                 if(type=="Verticaly")
                 {
                     if (tab[j][i] == playerNumber) {
-                        if(contionous==true)
+                        if(contionous==true) {
                             counter++;
-                        else
-                            counter=1;
+                            if (counter == numberToWin) {
+                                Notification.show("Gracz numer:" + playerNumber + " wygral");
+                            }
+                        }
+                        else {
+                            counter = 1;
+                            contionous=false;
+                        }
                     }else
                     {
                         contionous=false;
                     }
                 }
-
-                if(counter==numberToWin){
-                    Notification.show("Gracz numer:" + playerNumber + " wygral");
-
-
-                }
             }
     }
+
     public void checkCross() {
         for (int i = 0; 5 < i; i++) {
             boolean contionous = false;
@@ -202,7 +191,6 @@ windowAskForGame.center();
     public void sendMove(int i, int j,ApplicationCore applicationCore)
     {
         applicationCore.competitorListener.receiveMove(i,j);
-
     }
 
 

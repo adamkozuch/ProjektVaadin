@@ -25,6 +25,5 @@ public class Broadcaster {
     public interface BroadcastListener {
         public void receivePrpositionFromCompetitor(String message, BroadcastListener competitorListener,BroadcastListener thisListener,String stan);
         public void receiveMove(int x, int y);
-        public void receivePlayerNumber(int numberOfPlayer, String s);
     }
 }
