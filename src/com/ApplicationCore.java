@@ -66,7 +66,7 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
                     ApplicationCore.this.competitorListener =thisListener ;  //przekazuje sobie competitora
                     windowAskForGame.setCaption("Gracz :"+thisListener+" proponuje grę");
                     ApplicationCore.this.addWindow(windowAskForGame);
-                    yourMove=false;//gracz proszący jest pierwszy
+                    yourMove=false;//gracz pytany drugi
                     znak="x";
 
                 } else if (stan.equals("odpowiedz")) {

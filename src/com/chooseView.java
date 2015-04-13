@@ -14,7 +14,8 @@ public class chooseView extends VerticalLayout implements View {
         setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 
 //region definition of table
-
+Label l  = new Label("Gracz: "+app.thisPlayerName);
+        l.setWidth(null);
         Table players = new Table("Players");
         players.setWidth("300");
         players.setHeight("500");
@@ -46,6 +47,7 @@ public class chooseView extends VerticalLayout implements View {
             if (listener != app.thisPlayerName)
                 players.addItem(new Object[]{listener}, listener);
         }
+
         addComponent(players);
         addComponent(choose);
     }
