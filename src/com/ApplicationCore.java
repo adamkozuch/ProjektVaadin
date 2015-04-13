@@ -39,7 +39,7 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
 
 //region navigation
         getPage().setTitle("Navigation Example");
-        myListener =this;
+
         // Create a navigator to control the views
         navigator = new Navigator(this, this);
 
@@ -66,7 +66,7 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
                     ApplicationCore.this.competitorListener =thisListener ;  //przekazuje sobie competitora
                     windowAskForGame.setCaption("Gracz :"+thisListener+" proponuje grę");
                     ApplicationCore.this.addWindow(windowAskForGame);
-                     yourMove=false;//gracz proszący jest pierwszy
+                    yourMove=false;//gracz proszący jest pierwszy
                     znak="x";
 
                 } else if (stan.equals("odpowiedz")) {
@@ -120,8 +120,8 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
                             gridLayout.getComponent(finalI,finalJ).setCaption(znak);
                             competitorListener.receiveMove(finalI, finalJ);
                             tab[finalI][finalJ] = playerName;
-                            checkIfWinner(competitorName, 3, "Horizontally", tab); //czemu sprawdzam competitora
-                            checkIfWinner(competitorName,3,"Verticaly",tab);
+                            checkIfWinner(playerName, 3, "Horizontally", tab);
+                            checkIfWinner(playerName,3,"Verticaly",tab);
                         }
                     } else
                     {
@@ -133,46 +133,46 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
             }
     }
 
-    public void checkIfWinner(String playerNumber, int numberToWin, String type,String[][] tab)
+    public void checkIfWinner(String playerName, int numberToWin, String type,String[][] tab)
     {
-        boolean contionous=false;
+        boolean isContinious=false;
         int counter = 0;
         for ( int i= 0; i< 5; i++)
             for ( int j = 0; j < 5; j++)
             {
                 if(type=="Horizontally") {
-                    if (tab[i][j] == playerNumber) {
-                        if(contionous==true) {
+                    if (tab[i][j] == playerName) {
+                        if(isContinious==true) {
                             counter++;
                             if (counter == numberToWin) {
-                                Notification.show("Gracz numer:" + playerNumber + " wygral");
+                                Notification.show("Gracz numer:" + playerName + " wygral");
                             }
                         }
                         else {
                             counter = 1;
-                            contionous=true;
+                            isContinious=true;
                         }
                     }else
                     {
-                        contionous=false;
+                        isContinious=false;
                     }
                 }
                 if(type=="Verticaly")
                 {
-                    if (tab[j][i] == playerNumber) {
-                        if(contionous==true) {
+                    if (tab[j][i] == playerName) {
+                        if(isContinious==true) {
                             counter++;
                             if (counter == numberToWin) {
-                                Notification.show("Gracz numer:" + playerNumber + " wygral");
+                                Notification.show("Gracz numer:" + playerName + " wygral");
                             }
                         }
                         else {
                             counter = 1;
-                            contionous=false;
+                            isContinious=false;
                         }
                     }else
                     {
-                        contionous=false;
+                        isContinious=false;
                     }
                 }
             }
@@ -187,12 +187,5 @@ public class ApplicationCore extends UI  implements Broadcaster.BroadcastListene
             }
         }
     }
-
-    public void sendMove(int i, int j,ApplicationCore applicationCore)
-    {
-        applicationCore.competitorListener.receiveMove(i,j);
-    }
-
-
 
 }

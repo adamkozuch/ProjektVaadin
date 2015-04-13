@@ -1,2 +1,1 @@
-nazwa:Adam; haslo:haslo
-nazwa:Bartek; haslo:haslo
+nazwa:Adam; haslo:krakow
