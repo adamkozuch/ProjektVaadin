@@ -1,5 +1,0 @@
-nazwa:Adam; haslo:krakow
-nazwa:aa; haslo:aa
-nazwa:Marcin; haslo:haslo
-nazwa:Bartek; haslo:haslo
-nazwa:Szymon; haslo:haslo
